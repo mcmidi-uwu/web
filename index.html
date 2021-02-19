@@ -1,0 +1,48 @@
+<html>
+
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/webmidi@2.5.1"></script>
+    <script src="main.js"></script>
+    <link rel="stylesheet" href="main.css">
+</head>
+
+<body>
+    <h1>Welcome to McMidi.</h1>
+
+    <input type="text" id="endpoint" name="endpoint" value="http://mc.tehbrian.xyz:30021/mcmidi">
+    <label for="endpoint">Endpoint</label>
+    <br>
+    <input type="text" id="player-name" name="player-name" value="">
+    <label for="player-name">Player Name</label>
+    <br>
+    <select name="instrument" id="instrument">
+        <option value="BANJO">Banjo</option>
+        <option value="BASEDRUM">Basedrum</option>
+        <option value="BASS">Bass</option>
+        <option value="BELL">Bell</option>
+        <option value="BIT">Bit</option>
+        <option value="CHIME">Chime</option>
+        <option value="COW_BELL">Cow Bell</option>
+        <option value="DIDGERIDOO">Didgeridoo</option>
+        <option value="FLUTE">Flute</option>
+        <option value="GUITAR">Guitar</option>
+        <option value="HARP">Harp</option>
+        <option value="HAT">Hat</option>
+        <option value="IRON_XYLOPHONE">Iron Xylophone</option>
+        <option value="PLING">Pling</option>
+        <option value="SNARE">Snare</option>
+        <option value="XYLOPHONE">Xylophone</option>
+    </select>
+    <label for="instrument">Instrument</label>
+    <br>
+    <input type="checkbox" id="send-velocity" name="send-velocity" value="velocity">
+    <label for="send-velocity">Send Velocity</label><br>
+
+    <p><em>Note: This website is only compatible with browsers which natively support the Web MIDI API,
+            which are currently Chrome, Opera, and Edge.</em></p>
+
+    <p id="status">Loading..</p>
+    <p id="inputs"></p>
+</body>
+
+</html>
