@@ -1,4 +1,4 @@
-var endpoint
+var httpEndpoint
 var websocketEndpoint
 var playerName
 var instrument
@@ -30,7 +30,7 @@ function addText(id, value) {
 }
 
 function onLoad() {
-    endpoint = document.getElementById("endpoint")
+    httpEndpoint = document.getElementById("http-endpoint")
     websocketEndpoint = document.getElementById("websocket-endpoint")
     playerName = document.getElementById("player-name")
     instrument = document.getElementById("instrument")
@@ -148,7 +148,7 @@ function onNote(e, on) {
 
 function sendData(data) {
     console.log("sendData: " + JSON.stringify(data));
-    post(endpoint.value + "/note", data);
+    post(httpEndpoint.value + "/note", data);
     sendMessage(websocketEndpoint.value, data);
 }
 
