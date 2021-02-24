@@ -5,21 +5,30 @@
     <script src="https://cdn.jsdelivr.net/npm/webmidi@2.5.1"></script>
     <script src="main.js"></script>
     <link rel="stylesheet" href="main.css">
-    <title>MC MIDI</title>
+    <title>mcmidi web</title>
 </head>
 
 <body>
     <h1>Welcome to mcmidi web.</h1>
 
-    Connection Settings, use at least one.
+    <span>Connection Settings:</span>
     <br>
-    <input type="text" id="http-endpoint" name="http-endpoint" value="https://example.com:61672/mcmidi">
-    <label for="http-endpoint">HTTP-Endpoint</label>
+    <input type="radio" id="websocket" name="connection-type" value="websocket" checked="checked">
+    <label for="websocket">WebSocket (Preferred)</label>
+    <input type="radio" id="http" name="connection-type" value="http">
+    <label for="http">HTTP</label>
     <br>
-    <input type="text" id="websocket-endpoint" name="websocket-endpoint" value="wss://echo.websocket.org">
-    <label for="websocket-endpoint">Websocket Endpoint</label>
+    <input type="text" id="websocket-endpoint" name="websocket-endpoint" value="wss://example.com:61672/mcmidi/note" size="40">
+    <label id="websocket-endpoint-label" for="websocket-endpoint">WebSocket Endpoint</label>
+    <input type="text" id="http-endpoint" name="http-endpoint" value="https://example.com:61672/mcmidi/note" size="40">
+    <label id="http-endpoint-label" for="http-endpoint">HTTP Endpoint</label>
     <br>
-    Player settings
+    <button type="button" id="websocket-connect">Connect</button>
+    <br>
+
+    <br>
+
+    <span>Player Settings:</span>
     <br>
     <input type="text" id="player-name" name="player-name" value="Example">
     <label for="player-name">Player Name</label>
@@ -45,7 +54,8 @@
     <label for="instrument">Instrument</label>
     <br>
     <input type="checkbox" id="send-velocity" name="send-velocity" value="velocity">
-    <label for="send-velocity">Send Velocity</label><br>
+    <label for="send-velocity">Send Velocity</label>
+    <br>
 
     <p><em>Note: This website is only compatible with browsers which natively support the Web MIDI API,
             which are currently Chrome, Opera, and Edge.</em></p>
@@ -56,47 +66,51 @@
     <p id="piano">
         <p> Don't have a piano? Have this one instead!</p>
         <div class="piano-keys">
-            <div class="piano-white piano-key-F1 piano-key piano-disabled"></div>
-            <div class="piano-black"><div class="piano-black-raised piano-key-Gb1 piano-key"></div></div>
-            <div class="piano-white piano-key-G1 piano-key"></div>
-            <div class="piano-black"><div class="piano-black-raised piano-key-Ab1 piano-key"></div></div>
-            <div class="piano-white piano-key-A1 piano-key"></div>
-            <div class="piano-black"><div class="piano-black-raised piano-key-Bb1 piano-key"></div></div>
-            <div class="piano-white piano-key-B1 piano-key"></div>
-
-            <div class="piano-white piano-key-C2 piano-key"></div>
-            <div class="piano-black"><div class="piano-black-raised piano-key-Db2 piano-key"></div></div>
-            <div class="piano-white piano-key-D2 piano-key"></div>
-            <div class="piano-black"><div class="piano-black-raised piano-key-Eb2 piano-key"></div></div>
-            <div class="piano-white piano-key-E2 piano-key"></div>
-            <div class="piano-white piano-key-F2 piano-key"></div>
-            <div class="piano-black"><div class="piano-black-raised piano-key-Gb2 piano-key"></div></div>
-            <div class="piano-white piano-key-G2 piano-key"></div>
-            <div class="piano-black"><div class="piano-black-raised piano-key-Ab2 piano-key"></div></div>
-            <div class="piano-white piano-key-A2 piano-key"></div>
-            <div class="piano-black"><div class="piano-black-raised piano-key-Bb2 piano-key"></div></div>
-            <div class="piano-white piano-key-B2 piano-key"></div>
-
-            <div class="piano-white piano-key-C3 piano-key"></div>
-            <div class="piano-black"><div class="piano-black-raised piano-key-Db3 piano-key"></div></div>
-            <div class="piano-white piano-key-D3 piano-key"></div>
-            <div class="piano-black"><div class="piano-black-raised piano-key-Eb3 piano-key"></div></div>
-            <div class="piano-white piano-key-E3 piano-key"></div>
-            <div class="piano-white piano-key-F3 piano-key"></div>
+            <div class="piano-white piano-key-F3 piano-key piano-disabled"></div>
             <div class="piano-black"><div class="piano-black-raised piano-key-Gb3 piano-key"></div></div>
-            <div class="piano-white piano-key-G3 piano-key piano-disabled"></div>
-            <div class="piano-black"><div class="piano-black-raised piano-key-Ab3 piano-key piano-disabled"></div></div>
-            <div class="piano-white piano-key-A3 piano-key piano-disabled"></div>
-            <div class="piano-black"><div class="piano-black-raised piano-key-Bb3 piano-key piano-disabled"></div></div>
-            <div class="piano-white piano-key-B3 piano-key piano-disabled"></div>
+            <div class="piano-white piano-key-G3 piano-key"></div>
+            <div class="piano-black"><div class="piano-black-raised piano-key-Ab3 piano-key"></div></div>
+            <div class="piano-white piano-key-A3 piano-key"></div>
+            <div class="piano-black"><div class="piano-black-raised piano-key-Bb3 piano-key"></div></div>
+            <div class="piano-white piano-key-B3 piano-key"></div>
 
-            <div class="piano-white piano-key-C4 piano-key piano-disabled"></div>
-            <div class="piano-black"><div class="piano-black-raised piano-key-Db4 piano-key piano-disabled"></div></div>
-            <div class="piano-white piano-key-D4 piano-key piano-disabled"></div>
-            <div class="piano-black"><div class="piano-black-raised piano-key-Eb4 piano-key piano-disabled"></div></div>
-            <div class="piano-white piano-key-E4 piano-key piano-disabled"></div>
+            <div class="piano-white piano-key-C4 piano-key"></div>
+            <div class="piano-black"><div class="piano-black-raised piano-key-Db4 piano-key"></div></div>
+            <div class="piano-white piano-key-D4 piano-key"></div>
+            <div class="piano-black"><div class="piano-black-raised piano-key-Eb4 piano-key"></div></div>
+            <div class="piano-white piano-key-E4 piano-key"></div>
+            <div class="piano-white piano-key-F4 piano-key"></div>
+            <div class="piano-black"><div class="piano-black-raised piano-key-Gb4 piano-key"></div></div>
+            <div class="piano-white piano-key-G4 piano-key"></div>
+            <div class="piano-black"><div class="piano-black-raised piano-key-Ab4 piano-key"></div></div>
+            <div class="piano-white piano-key-A4 piano-key"></div>
+            <div class="piano-black"><div class="piano-black-raised piano-key-Bb4 piano-key"></div></div>
+            <div class="piano-white piano-key-B4 piano-key"></div>
+
+            <div class="piano-white piano-key-C5 piano-key"></div>
+            <div class="piano-black"><div class="piano-black-raised piano-key-Db5 piano-key"></div></div>
+            <div class="piano-white piano-key-D5 piano-key"></div>
+            <div class="piano-black"><div class="piano-black-raised piano-key-Eb5 piano-key"></div></div>
+            <div class="piano-white piano-key-E5 piano-key"></div>
+            <div class="piano-white piano-key-F5 piano-key"></div>
+            <div class="piano-black"><div class="piano-black-raised piano-key-Gb5 piano-key"></div></div>
+            <div class="piano-white piano-key-G5 piano-key piano-disabled"></div>
+            <div class="piano-black"><div class="piano-black-raised piano-key-Ab5 piano-key piano-disabled"></div></div>
+            <div class="piano-white piano-key-A5 piano-key piano-disabled"></div>
+            <div class="piano-black"><div class="piano-black-raised piano-key-Bb5 piano-key piano-disabled"></div></div>
+            <div class="piano-white piano-key-B5 piano-key piano-disabled"></div>
+
+            <div class="piano-white piano-key-C6 piano-key piano-disabled"></div>
+            <div class="piano-black"><div class="piano-black-raised piano-key-Db6 piano-key piano-disabled"></div></div>
+            <div class="piano-white piano-key-D6 piano-key piano-disabled"></div>
+            <div class="piano-black"><div class="piano-black-raised piano-key-Eb6 piano-key piano-disabled"></div></div>
+            <div class="piano-white piano-key-E6 piano-key piano-disabled"></div>
         </div>
     </p>
+
+    <label for="log">Log:</label>
+    <br>
+    <textarea id="log" rows=6 cols=70></textarea>
 </body>
 
 </html>
