@@ -262,12 +262,7 @@ function addText(id, value) {
  * @param {string} keyName 
  */
 function onClick(keyName) {
-    var data = new NoteRequest(playerName.value, "ON",
-        new Note(instrument.value,
-            WebMidi.guessNoteNumber(keyName),
-            1)
-    )
-    sendData(data)
+    createAndSendNote("ON", WebMidi.guessNoteNumber(keyName), 1)
 }
 
 /**
@@ -292,16 +287,27 @@ function onNoteOff(e) {
  * @param {*} type 
  */
 function onNote(e, type) {
+    createAndSendNote(type, e.note.number, sendVelocity.checked ? e.velocity : 1)
+}
+
+/**
+ * Creates and sends a note. Gets instrument based off of the current
+ * value of the instrument selector element, thus this does not require 
+ * an argument for it.
+ * @param {int} midiNoteNumber the midi note number
+ * @param {string} type the type of request, either "ON" or "OFF" atm
+ */
+function createAndSendNote(type, midiNoteNumber, velocity) {
     var data
     if (instrument.value == "MAGIC") {
         data = new NoteRequest(playerName.value, type,
-            getMagicNote(e.note.number,
-                sendVelocity.checked ? e.velocity : 1))
+            getMagicNote(midiNoteNumber,
+                velocity))
     } else {
         data = new NoteRequest(playerName.value, type,
             new Note(instrument.value,
-                e.note.number,
-                sendVelocity.checked ? e.velocity : 1))
+                midiNoteNumber,
+                velocity))
     }
 
     sendData(data)
