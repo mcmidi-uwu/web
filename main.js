@@ -18,6 +18,11 @@ var playerName
 var instrument
 var sendVelocity
 
+// The magic octave instruments.
+var magicOctaveOneInstrument
+var magicOctaveTwoInstrument
+var magicOctaveThreeInstrument
+
 /**
  * The active WebSocket connection. Might be null.
  */
@@ -65,16 +70,27 @@ function onLoad() {
     instrument = document.getElementById("instrument")
     sendVelocity = document.getElementById("send-velocity")
 
+    magicOctaveOneInstrument = document.getElementById("magic-octave-one-instrument")
+    magicOctaveTwoInstrument = document.getElementById("magic-octave-two-instrument")
+    magicOctaveThreeInstrument = document.getElementById("magic-octave-three-instrument")
+
     setupPianoKeys()
 
     // Set the active connection type whenever a radio button is clicked.
     for (let radioButton of connectionTypes) {
         radioButton.addEventListener("change", function () {
-            setActiveConnectionType(this.value)
+            setActiveConnectionVisibility(this.value)
         })
     }
 
-    setActiveConnectionType("websocket")
+    setActiveConnectionVisibility("websocket")
+
+    // Set the magic octave instruments selectors visibility whenever magic is selected.
+    instrument.addEventListener("change", function() {
+        setMagicOctaveInstrumentsVisibility(this.value == "MAGIC") 
+    });
+
+    setMagicOctaveInstrumentsVisibility(false)
 
     webSocketConnectButton.addEventListener("click", connectWebSocket)
 
@@ -108,7 +124,7 @@ function setupPianoKeys() {
  * WebSocket connect button.
  * @param {string} setting either "websocket" or "http"
  */
-function setActiveConnectionType(setting) {
+function setActiveConnectionVisibility(setting) {
     if (setting == "websocket") {
         webSocketEndpoint.style.display = "inline"
         webSocketEndpointLabel.style.display = "inline"
@@ -130,6 +146,22 @@ function setActiveConnectionType(setting) {
         httpEndpointLabel.style.display = "none"
 
         webSocketConnectButton.style.display = "none"
+    }
+}
+
+/**
+ * Sets whether the magic instrument options should be visible.
+ * @param {boolean} bool 
+ */
+function setMagicOctaveInstrumentsVisibility(bool) {
+    if (bool) {
+        magicOctaveOneInstrument.style.display = "block"
+        magicOctaveTwoInstrument.style.display = "block"
+        magicOctaveThreeInstrument.style.display = "block"
+    } else {
+        magicOctaveOneInstrument.style.display = "none"
+        magicOctaveTwoInstrument.style.display = "none"
+        magicOctaveThreeInstrument.style.display = "none"
     }
 }
 
@@ -260,11 +292,18 @@ function onNoteOff(e) {
  * @param {*} type 
  */
 function onNote(e, type) {
-    var data = new NoteRequest(playerName.value, type,
-        new Note(instrument.value,
-            e.note.number,
-            sendVelocity.checked ? e.velocity : 1)
-    )
+    var data
+    if (instrument.value == "MAGIC") {
+        data = new NoteRequest(playerName.value, type,
+            getMagicNote(e.note.number,
+                sendVelocity.checked ? e.velocity : 1))
+    } else {
+        data = new NoteRequest(playerName.value, type,
+            new Note(instrument.value,
+                e.note.number,
+                sendVelocity.checked ? e.velocity : 1))
+    }
+
     sendData(data)
 }
 
@@ -319,6 +358,42 @@ function sendWebSocketMessage(url, data) {
 function log(message) {
     console.log(message)
     logElement.innerHTML = message + "\n" + logElement.innerHTML
+}
+
+/**
+ * Gets a magic note which has the instrument according to the note being played.
+ * @returns {note} note
+ */
+function getMagicNote(midiNoteNumber, velocity) {
+    // Here, we select an instrument for the correct range.
+    var instrument
+    if (midiNoteNumber >= 30 && midiNoteNumber <= 53) {
+        instrument = magicOctaveOneInstrument.value
+    } else if (midiNoteNumber >= 54 && midiNoteNumber <= 78) {
+        instrument = magicOctaveTwoInstrument.value
+    } else if (midiNoteNumber >= 79 && midiNoteNumber <= 102) {
+        instrument = magicOctaveThreeInstrument.value
+    } else {
+        instrument = "BIT"
+    }
+
+    // Normalize MIDI note number into a range between F#3 to F#5.
+    var pitch
+    if (midiNoteNumber <= 29) {
+        pitch = 54
+    } else if (midiNoteNumber >= 103) {
+        pitch = 78
+    } else {
+        if (midiNoteNumber <= 53) {
+            pitch = midiNoteNumber + 24
+        } else if (midiNoteNumber >= 79) {
+            pitch = midiNoteNumber - 24
+        } else {
+            pitch = midiNoteNumber
+        }
+    }
+
+    return new Note(instrument, pitch, velocity)
 }
 
 // After all functions are loaded, call onLoad.
